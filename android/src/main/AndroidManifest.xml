@@ -1,0 +1,16 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="org.kqed.social_story_share">
+  <!-- Required on Android 11+ so the host app can detect and launch
+       Instagram and Facebook. Declared here so consumers don't have to
+       remember. -->
+  <queries>
+    <package android:name="com.instagram.android" />
+    <intent>
+      <action android:name="com.instagram.share.ADD_TO_STORY" />
+    </intent>
+    <package android:name="com.facebook.katana" />
+    <intent>
+      <action android:name="com.facebook.stories.ADD_TO_STORY" />
+    </intent>
+  </queries>
+</manifest>
