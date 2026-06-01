@@ -9,6 +9,7 @@ public class SocialStorySharePlugin: NSObject, FlutterPlugin {
   // Standard Facebook pasteboard keys. Documented by Meta for the public
   // "Sharing to Stories" iOS integration.
   private static let kFacebookBackgroundImage = "com.facebook.sharedSticker.backgroundImage"
+  private static let kFacebookAppID = "com.facebook.sharedSticker.appID"
 
   // Pasteboard expiration window. Long enough for Instagram to consume the
   // sticker payload but short enough that we don't pollute the user's
@@ -170,9 +171,11 @@ public class SocialStorySharePlugin: NSObject, FlutterPlugin {
       return
     }
 
-    guard let facebookURL = URL(
-      string: "facebook-stories://share?source_application=\(facebookAppId)"
-    ),
+    // Meta's iOS contract uses a bare facebook-stories://share URL and passes the
+    // App ID on the pasteboard (com.facebook.sharedSticker.appID), not only in
+    // the query string. Without the pasteboard appID key, Facebook often opens
+    // to the home feed instead of the Stories composer.
+    guard let facebookURL = URL(string: "facebook-stories://share"),
           UIApplication.shared.canOpenURL(facebookURL)
     else {
       result(
@@ -186,7 +189,8 @@ public class SocialStorySharePlugin: NSObject, FlutterPlugin {
     }
 
     let item: [String: Any] = [
-      SocialStorySharePlugin.kFacebookBackgroundImage: backgroundImage
+      SocialStorySharePlugin.kFacebookBackgroundImage: backgroundImage,
+      SocialStorySharePlugin.kFacebookAppID: facebookAppId,
     ]
     let options: [UIPasteboard.OptionsKey: Any] = [
       .expirationDate: Date(
