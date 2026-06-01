@@ -36,9 +36,10 @@ class SocialStorySharePlugin :
         private const val ADD_TO_STORY = "com.instagram.share.ADD_TO_STORY"
         private const val FACEBOOK_PACKAGE = "com.facebook.katana"
         private const val FACEBOOK_ADD_TO_STORY = "com.facebook.stories.ADD_TO_STORY"
-        // Instagram's and Facebook's intents read this extra to identify the
-        // calling Meta app.
+        // Instagram reads source_application; Facebook requires the platform extra.
         private const val EXTRA_SOURCE_APPLICATION = "source_application"
+        private const val EXTRA_FACEBOOK_APPLICATION_ID =
+            "com.facebook.platform.extra.APPLICATION_ID"
         // Used when packaging the image file via FileProvider.
         private const val MIME_PNG = "image/png"
     }
@@ -255,10 +256,16 @@ class SocialStorySharePlugin :
                 return
             }
 
+        currentActivity.grantUriPermission(
+            FACEBOOK_PACKAGE,
+            imageUri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION,
+        )
+
         val intent =
             Intent(FACEBOOK_ADD_TO_STORY).apply {
                 setDataAndType(imageUri, MIME_PNG)
-                putExtra(EXTRA_SOURCE_APPLICATION, facebookAppId)
+                putExtra(EXTRA_FACEBOOK_APPLICATION_ID, facebookAppId)
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 setPackage(FACEBOOK_PACKAGE)
             }

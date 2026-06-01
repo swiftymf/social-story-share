@@ -125,11 +125,38 @@ Add Facebook's URL schemes to your app's `Info.plist`:
 </array>
 ```
 
+Facebook also expects your Meta App ID in the host `Info.plist` (same numeric ID
+you pass to `shareToFacebookStory`). Without this, the Facebook app may launch
+but stay on the home feed instead of opening the Stories composer:
+
+```xml
+<key>FacebookAppID</key>
+<string>YOUR_FB_APP_ID</string>
+<key>FacebookDisplayName</key>
+<string>Your App Name</string>
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>fbYOUR_FB_APP_ID</string>
+    </array>
+  </dict>
+</array>
+```
+
+On iOS the plugin writes both `com.facebook.sharedSticker.backgroundImage` and
+`com.facebook.sharedSticker.appID` to the pasteboard per Meta's contract.
+
 ### Android
 
 The plugin's `AndroidManifest.xml` already declares the `<queries>` entry for
 the Facebook package and `com.facebook.stories.ADD_TO_STORY` intent. The
 `FileProvider` configured for Instagram is reused for Facebook.
+
+Facebook's Android intent uses `com.facebook.platform.extra.APPLICATION_ID`
+(not Instagram's `source_application` extra). The plugin sets the correct
+extra for Facebook while keeping `source_application` for Instagram.
 
 ### Testing the example app
 
